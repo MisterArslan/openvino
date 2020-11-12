@@ -22,13 +22,15 @@ public:
                                                     _input_name(input_name) { }
 
     void startAsync() {
-        auto blob = createRandomBlob();
+        auto mat = createMat();
+        auto blob = createRandomBlob(mat);
         _request.SetBlob(_input_name, blob);
         _request.StartAsync();
     }
 
     void infer() {
-        auto blob = createRandomBlob();
+        auto mat = createMat();
+        auto blob = createRandomBlob(mat);
         _request.SetBlob(_input_name, blob);
         _request.Infer();
     }
@@ -44,10 +46,14 @@ public:
         return _request.GetBlob(name);
     }
 
-    InferenceEngine::Blob::Ptr createRandomBlob() {
+    cv::Mat createMat() {
         cv::Mat frame(224, 224, CV_8UC3);
         cv::randu(frame, cv::Scalar(0, 0, 0), cv::Scalar(255, 255, 255));
 
+        return frame;
+    }
+
+    InferenceEngine::Blob::Ptr createRandomBlob(cv::Mat &frame) {
         size_t channels = frame.channels();
         size_t height = frame.size().height;
         size_t width = frame.size().width;
